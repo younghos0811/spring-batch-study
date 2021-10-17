@@ -1,5 +1,8 @@
 package com.fastcampus.hellospringbatch.job;
 
+import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -12,8 +15,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.RequiredArgsConstructor;
-
 @Configuration
 @RequiredArgsConstructor
 public class HelloJobConfig {
@@ -24,17 +25,17 @@ public class HelloJobConfig {
     @Bean("hellJob")
     public Job helloJob(Step helloStep) {
         return jobBuilderFactory.get("helloJob")
-                .incrementer(new RunIdIncrementer())
-                .start(helloStep)
-                .build();
+            .incrementer(new RunIdIncrementer())
+            .start(helloStep)
+            .build();
     }
 
     @JobScope
     @Bean("helloStep")
     public Step helloStep(Tasklet tasklet) {
         return stepBuilderFactory.get("helloStep")
-                .tasklet(tasklet)
-                .build();
+            .tasklet(tasklet)
+            .build();
     }
 
     @StepScope
