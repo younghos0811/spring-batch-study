@@ -21,7 +21,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 
 import com.fastcampus.hellospringbatch.core.domain.PlainText;
+import com.fastcampus.hellospringbatch.core.domain.ResultText;
 import com.fastcampus.hellospringbatch.core.repository.PlainTextRepository;
+import com.fastcampus.hellospringbatch.core.repository.ResultTextRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +34,7 @@ public class PlainTextJobConfig {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final PlainTextRepository plainTextRepository;
+    private final ResultTextRepository resultTextRepository;
 
     @Bean("plainTextJob")
     public Job plainTextJob(Step plainTextStep) {
@@ -61,7 +64,7 @@ public class PlainTextJobConfig {
             .name("plainTextReader")
             .repository(plainTextRepository)
             .methodName("findBy") //호출하려고 하는 repository의 method
-            .pageSize(1)) //commit interval size
+            .pageSize(2)) //commit interval size
             .arguments(List.of()) //현재는 파라미터로 넣는게 없음으로 빈어있는 list 보냄
             .sorts(Collections.singletonMap("id", Sort.Direction.DESC)) //id 기반 역순으로
             .build();
@@ -79,7 +82,7 @@ public class PlainTextJobConfig {
     @Bean
     public ItemWriter<String> plainTextWriter() {
         return items -> {
-            items.forEach(item -> System.out.println(item));
+            items.forEach(item -> resultTextRepository.save(new ResultText(null, item ))); //id를 null로 넣으면 자동으로 채번이 들어감
             System.out.println("==== chunk is finished");
         };
     }
